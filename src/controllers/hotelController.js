@@ -7,7 +7,7 @@ export const createHotel = async (req, res, next) => {
     const {
       name,
       description,
-      street,
+      address,
       city,
       state,
       country,
@@ -20,7 +20,7 @@ export const createHotel = async (req, res, next) => {
     const hotel = await Hotel.create({
       name,
       description,
-      street,
+      address,
       city,
       state,
       country,
@@ -102,7 +102,7 @@ export const updateHotel = async (req, res, next) => {
     const {
       name,
       description,
-      street,
+      address,
       city,
       state,
       country,
@@ -117,7 +117,7 @@ export const updateHotel = async (req, res, next) => {
       {
         name,
         description,
-        street,
+        address,
         city,
         state,
         country,

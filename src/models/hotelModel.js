@@ -14,7 +14,7 @@ const hotelSchema = new mongoose.Schema(
       trim: true,
     },
 
-    street: {
+    address: {
       type: String,
       required: [true, "Street address is required"],
       trim: true,

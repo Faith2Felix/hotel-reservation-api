@@ -3,7 +3,7 @@ import { z } from "zod";
 export const createHotelSchema = z.object({
   name: z.string().trim().min(1, "Hotel name is required"),
   description: z.string().trim().min(1, "Description is required"),
-  street: z.string().trim().min(1, "Street is required"),
+  address: z.string().trim().min(1, "Street is required"),
   city: z.string().trim().min(1, "City is required"),
   state: z.string().trim().min(1, "State is required"),
   country: z.string().trim().min(1, "Country is required"),
