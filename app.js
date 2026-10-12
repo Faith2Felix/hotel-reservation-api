@@ -1,8 +1,10 @@
+dotenv.config();
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-
-dotenv.config();
+import connectDB from "./src/config/db.js";
+import hotelRoute from "./src/routes/hotelRoute.js";
+import { errorHandler } from "./src/middlewares/errorHandler.js";
 
 const app = express();
 
@@ -15,6 +17,11 @@ app.get("/", (req, res) => {
   });
 });
 
+connectDB();
+
+app.use("/api/hotels", hotelRoute);
+
+app.use(errorHandler);
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
