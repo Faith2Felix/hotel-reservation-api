@@ -8,14 +8,14 @@ This project is a backend API that allows users to interact with a hotel reserva
 
 ## Technologies
 
-* Node.js
-* Express.js
-* MongoDB
-* Mongoose
-* JWT
-* bcryptjs
-* dotenv
-* CORS
+- Node.js
+- Express.js
+- MongoDB
+- Mongoose
+- JWT
+- bcryptjs
+- dotenv
+- CORS
 
 ## Project Structure
 
@@ -56,7 +56,7 @@ npm run dev
 ## 🚀 API Documentation & Postman Collection
 
 - 📘 **Full API Documentation**: See [API_DOCUMENTATION.md](./API_DOCUMENTATION.md) for complete endpoint references, schemas, and error codes.
-- 📮 **Postman Collection**: Import [hotel-reservation-api.postman_collection.json](./hotel-reservation-api.postman_collection.json) directly into Postman to test all routes with pre-configured variables and auto-token management.
+- 📮 **Postman Collection**: Visit https://documenter.getpostman.com/view/24775781/2sBYHRVhNx to test all routes with pre-configured variables and auto-token management.
 
 ## Project Status
 
