@@ -1,6 +1,6 @@
 import Hotel from "../models/Hotel.js";
 import Room from "../models/Room.js";
-import Reservation from "../models/Reservation.js";
+import Reservation from "../models/reservationModel.js";
 
 // Search hotels by location or name
 export const searchHotels = async (req, res) => {

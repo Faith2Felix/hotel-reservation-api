@@ -1,5 +1,5 @@
 import Payment from "../models/Payment.js";
-import Reservation from "../models/Reservation.js";
+import Reservation from "../models/reservationModel.js";
 import crypto from "crypto";
 
 // Create a simulated payment
@@ -43,7 +43,8 @@ export const createPayment = async (req, res) => {
     }
 
     // Confirm that the reservation belongs to this user.
-    const reservationUserId = String(reservation.user);
+    const reservationUserId = String(reservation.customer);
+
     if (reservationUserId !== String(userId)) {
       return res.status(403).json({
         success: false,

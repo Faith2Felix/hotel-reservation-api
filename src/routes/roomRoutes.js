@@ -8,7 +8,7 @@ import {
   deleteRoom,
 } from "../controllers/roomController.js";
 
-import { validateRoom } from "../middleware/validateRoom.js";
+import { validateRoom } from "../middlewares/validateRoom.js";
 
 const router = express.Router();
 

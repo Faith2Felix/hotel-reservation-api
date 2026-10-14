@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
 import User from "../models/User.js";
-import { sendAuthResponse } from "../middleware/token.js";
+import { sendAuthResponse } from "../middlewares/token.js";
 
 // Checks that the password is at least 8 characters and includes a letter and a number.
 const isStrongPassword = (p) =>
@@ -25,7 +25,8 @@ export const register = async (req, res) => {
     }
     if (!isStrongPassword(password)) {
       return res.status(400).json({
-        message: "Password must be at least 8 characters and contain a letter and a number.",
+        message:
+          "Password must be at least 8 characters and contain a letter and a number.",
       });
     }
 
@@ -33,8 +34,8 @@ export const register = async (req, res) => {
     const user = await User.create({ name, email, password, phone });
     sendAuthResponse(user, 201, res);
   } catch (error) {
-   return  res.status(500).json({
-      message: error.message || "Internal Server error"
+    return res.status(500).json({
+      message: error.message || "Internal Server error",
     });
   }
 };
@@ -53,7 +54,7 @@ export const registerAdmin = async (req, res) => {
 
     if (!adminKey || !safeEqual(adminKey, process.env.ADMIN_SIGNUP_KEY)) {
       return res.status(403).json({
-        message: "Invalid admin key."
+        message: "Invalid admin key.",
       });
     }
 
@@ -79,9 +80,9 @@ export const registerAdmin = async (req, res) => {
     });
     sendAuthResponse(user, 201, res);
   } catch (error) {
-   return res.status(500).json({
-       message: error.message || "Internal Server error"
-      });
+    return res.status(500).json({
+      message: error.message || "Internal Server error",
+    });
   }
 };
 
@@ -91,7 +92,8 @@ export const login = async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) {
       return res.status(400).json({
-        message: "Email and password are required." });
+        message: "Email and password are required.",
+      });
     }
 
     const user = await User.findOne({
@@ -101,7 +103,7 @@ export const login = async (req, res) => {
     // Same message for unknown email / wrong password to avoid user enumeration
     if (!user || !(await user.comparePassword(String(password)))) {
       return res.status(401).json({
-        message: "Invalid email or password."
+        message: "Invalid email or password.",
       });
     }
     if (!user.isActive) {
@@ -113,7 +115,7 @@ export const login = async (req, res) => {
     sendAuthResponse(user, 200, res);
   } catch (err) {
     return res.status(500).json({
-      message: "Server error"
+      message: "Server error",
     });
   }
 };

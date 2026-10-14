@@ -11,7 +11,7 @@ const protect = async (req, res, next) => {
     const header = req.headers.authorization || "";
     if (!header.startsWith("Bearer ")) {
       return res.status(401).json({
-        message: "User not authenticated. Please log in."
+        message: "User not authenticated. Please log in.",
       });
     }
 
@@ -29,23 +29,21 @@ const protect = async (req, res, next) => {
     const user = await User.findById(decoded.id);
     if (!user || !user.isActive) {
       return res.status(401).json({
-          message:
-            "The user for this token no longer exists or is deactivated.",
-        });
+        message: "The user for this token no longer exists or is deactivated.",
+      });
     }
 
     if (user.changedPasswordAfter(decoded.iat)) {
       return res.status(401).json({
-          message: "Password was changed recently. Please log in again.",
-        });
+        message: "Password was changed recently. Please log in again.",
+      });
     }
 
     req.user = user;
     next();
-
   } catch (error) {
     res.status(500).json({
-      message: error.message || "Internal server error"
+      message: error.message || "Internal server error",
     });
   }
 };
@@ -54,17 +52,16 @@ const protect = async (req, res, next) => {
  * authorize: role-based access. Must run AFTER protect.
  * Usage: router.get('/x', protect, authorize('admin'), handler)
  */
-const authorize = (...roles) =>
+const authorize =
+  (...roles) =>
   (req, res, next) => {
     if (!req.user || !roles.includes(req.user.role)) {
       return res.status(403).json({
-          message: "You do not have permission to perform this action.",
-        });
+        message: "You do not have permission to perform this action.",
+      });
     }
     next();
   };
-
-
 
 // Loads the resource and allows access only to its owner or an admin.
 const restrictToOwnerOrAdmin =
@@ -73,14 +70,14 @@ const restrictToOwnerOrAdmin =
     try {
       if (!mongoose.isValidObjectId(req.params[param])) {
         return res.status(400).json({
-          message: "Invalid id."
+          message: "Invalid id.",
         });
       }
 
       const doc = await Model.findById(req.params[param]);
       if (!doc) {
         return res.status(404).json({
-          message: "Resource not found."
+          message: "Resource not found.",
         });
       }
 
@@ -88,15 +85,15 @@ const restrictToOwnerOrAdmin =
       const isOwner = String(doc[ownerField]) === String(req.user._id);
       if (!isAdmin && !isOwner) {
         return res.status(403).json({
-            message: "You can only access your own resources.",
-          });
+          message: "You can only access your own resources.",
+        });
       }
       req.resource = doc;
       next();
-
     } catch (error) {
       res.status(500).json({
-        message: error.messsage || "Internal Server error" });
+        message: error.message || "Internal server error",
+      });
     }
   };
 

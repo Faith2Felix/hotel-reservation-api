@@ -1,7 +1,6 @@
-
 import Hotel from "../models/Hotel.js";
 import Room from "../models/Room.js";
-import Reservation from "../models/Reservation.js";
+import Reservation from "../models/reservationModel.js";
 
 // Search hotels by location or name
 export const searchHotels = async (req, res) => {
@@ -98,7 +97,7 @@ export const searchRooms = async (req, res) => {
 
     const rooms = await Room.find(roomFilter).populate(
       "hotel",
-      "name address city country"
+      "name address city country",
     );
 
     // If dates aren't supplied, return matching rooms
@@ -115,18 +114,19 @@ export const searchRooms = async (req, res) => {
     const endDate = new Date(checkOut);
 
     // Find existing reservations that overlap the requested stay.
+
     const overlappingReservations = await Reservation.find({
-      status: { $nin: ["cancelled"] },
-      checkIn: { $lt: endDate },
-      checkOut: { $gt: startDate },
+      status: { $in: ["pending", "confirmed"] },
+      checkInDate: { $lt: endDate },
+      checkOutDate: { $gt: startDate },
     }).select("room");
 
-    const bookedRoomIds = overlappingReservations.map(
-      (reservation) => String(reservation.room)
+    const bookedRoomIds = overlappingReservations.map((reservation) =>
+      String(reservation.room),
     );
 
     const availableRooms = rooms.filter(
-      (room) => !bookedRoomIds.includes(String(room._id))
+      (room) => !bookedRoomIds.includes(String(room._id)),
     );
 
     return res.status(200).json({

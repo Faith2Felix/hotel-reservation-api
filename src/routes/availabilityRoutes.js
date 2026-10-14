@@ -1,10 +1,9 @@
-
 import express from "express";
 import {
   searchHotels,
   searchRooms,
 } from "../controllers/availabilityController.js";
-import { validateAvailabilityQuery } from "../middleware/validateAvailabilityQuery.js";
+import { validateAvailabilityQuery } from "../middlewares/validateAvailabityQuery.js";
 
 const router = express.Router();
 

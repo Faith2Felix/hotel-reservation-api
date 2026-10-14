@@ -1,30 +1,35 @@
 import mongoose from "mongoose";
 import User, { ROLES } from "../models/User.js";
-import { sendAuthResponse } from "../middleware/token.js";
+import { sendAuthResponse } from "../middlewares/token.js";
 
 // ---------- Own profile (any logged-in user) ----------
 
 // GET /api/users/me
-export const getProfile = (req, res) => res.json({ success: true, user: req.user });
+export const getProfile = (req, res) =>
+  res.json({ success: true, user: req.user });
 
 // PUT /api/users/me   (only name, phone, email are editable here)
 export const updateProfile = async (req, res) => {
   try {
     const id = req.user._id;
-    const {name, phone, email} = req.body;
+    const { name, phone, email } = req.body;
 
-
-    const user = await User.findByIdAndUpdate(id, {
-      name, phone, email,
-    }, {new: true, runValidators: true});
+    const user = await User.findByIdAndUpdate(
+      id,
+      {
+        name,
+        phone,
+        email,
+      },
+      { new: true, runValidators: true },
+    );
     return res.status(200).json({
-       message: "Profile updated successfully",
-       data: user
-      });
-
+      message: "Profile updated successfully",
+      data: user,
+    });
   } catch (error) {
     return res.status(500).json({
-      message: error.message || "Internal Server error"
+      message: error.message || "Internal Server error",
     });
   }
 };
@@ -35,8 +40,8 @@ export const changePassword = async (req, res) => {
     const { currentPassword, newPassword } = req.body;
     if (!currentPassword || !newPassword) {
       return res.status(400).json({
-          message: "currentPassword and newPassword are required.",
-        });
+        message: "currentPassword and newPassword are required.",
+      });
     }
     if (
       typeof newPassword !== "string" ||
@@ -45,15 +50,16 @@ export const changePassword = async (req, res) => {
       !/\d/.test(newPassword)
     ) {
       return res.status(400).json({
-          message:
-            "New password must be at least 8 characters and contain a letter and a number.",
-        });
+        message:
+          "New password must be at least 8 characters and contain a letter and a number.",
+      });
     }
 
     const user = await User.findById(req.user._id).select("+password");
     if (!(await user.comparePassword(String(currentPassword)))) {
       return res.status(401).json({
-        message: "Current password is incorrect." });
+        message: "Current password is incorrect.",
+      });
     }
 
     user.password = newPassword; // hashed by pre-save hook
@@ -61,18 +67,22 @@ export const changePassword = async (req, res) => {
     sendAuthResponse(user, 200, res); // fresh token; old ones are invalidated
   } catch (error) {
     res.status(500).json({
-      message: error.message || "Internal Server error" });
+      message: error.message || "Internal Server error",
+    });
   }
 };
 
 // DELETE /api/users/me  (deactivate own account)
 export const deactivateMe = async (req, res) => {
   try {
-    const deleteMyProfile = await User.findByIdAndUpdate(req.user._id, { isActive: false });
+    const deleteMyProfile = await User.findByIdAndUpdate(req.user._id, {
+      isActive: false,
+    });
     res.status(204).send();
   } catch (error) {
-   return res.status(500).json({
-    message: error.message || "Internal Server error" });
+    return res.status(500).json({
+      message: error.message || "Internal Server error",
+    });
   }
 };
 
@@ -107,7 +117,7 @@ export const getAllUsers = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
-      message: error.message || "Internal Server error"
+      message: error.message || "Internal Server error",
     });
   }
 };
@@ -117,25 +127,24 @@ export const getUserById = async (req, res) => {
   try {
     if (!mongoose.isValidObjectId(req.params.id)) {
       return res.status(400).json({
-        message: "Invalid user id."
+        message: "Invalid user id.",
       });
     }
 
     const user = await User.findById(req.params.id);
-    if (!user){
+    if (!user) {
       return res.status(404).json({
-        message: "User not found."
+        message: "User not found.",
       });
     }
 
     return res.status(200).json({
       message: "user fetched successfully",
-      data: user
+      data: user,
     });
-
   } catch (error) {
-   return res.status(500).json({
-     message: error.message || "Internal Server error"
+    return res.status(500).json({
+      message: error.message || "Internal Server error",
     });
   }
 };
@@ -146,19 +155,19 @@ export const updateUserRole = async (req, res) => {
     const { role } = req.body;
     if (!mongoose.isValidObjectId(req.params.id)) {
       return res.status(400).json({
-        message: "Invalid user id."
+        message: "Invalid user id.",
       });
     }
 
     if (!Object.values(ROLES).includes(role)) {
       return res.status(400).json({
-          message: `Role must be one of: ${Object.values(ROLES).join(", ")}`,
-        });
+        message: `Role must be one of: ${Object.values(ROLES).join(", ")}`,
+      });
     }
 
     if (String(req.params.id) === String(req.user._id)) {
       return res.status(400).json({
-        message: "You cannot change your own role."
+        message: "You cannot change your own role.",
       });
     }
 
@@ -169,17 +178,17 @@ export const updateUserRole = async (req, res) => {
     );
     if (!user) {
       return res.status(404).json({
-        message: "User not found."
+        message: "User not found.",
       });
     }
     return res.status(200).json({
       message: "User role updated successfully",
-      data: user });
-
+      data: user,
+    });
   } catch (error) {
-      return res.status(500).json({
-        message: error.message || "Internal Server error"
-      });
+    return res.status(500).json({
+      message: error.message || "Internal Server error",
+    });
   }
 };
 
@@ -188,13 +197,13 @@ export const deactivateUser = async (req, res) => {
   try {
     if (!mongoose.isValidObjectId(req.params.id)) {
       return res.status(400).json({
-        message: "Invalid user id."
+        message: "Invalid user id.",
       });
     }
 
     if (String(req.params.id) === String(req.user._id)) {
       return res.status(400).json({
-        message: "You cannot deactivate yourself."
+        message: "You cannot deactivate yourself.",
       });
     }
 
@@ -206,15 +215,16 @@ export const deactivateUser = async (req, res) => {
 
     if (!user) {
       return res.status(404).json({
-        message: "User not found." });
+        message: "User not found.",
+      });
     }
     return res.status(200).json({
       message: "User deactivated Siccessfully.",
-      data: user
+      data: user,
     });
-
   } catch (error) {
     res.status(500).json({
-      message: error.messaage || "Internal Server error" });
+      message: error.messaage || "Internal Server error",
+    });
   }
 };

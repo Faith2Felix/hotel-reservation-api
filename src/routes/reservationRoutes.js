@@ -1,4 +1,3 @@
-
 import express from "express";
 import {
   createReservation,
@@ -7,11 +6,13 @@ import {
   cancelReservation,
 } from "../controllers/reservationController.js";
 
+import { protect } from "../middlewares/auth.js";
+
 const router = express.Router();
 
-router.post("/", createReservation);
-router.get("/", getReservations);
-router.get("/:id", getReservationById);
-router.patch("/:id/cancel", cancelReservation);
+router.post("/", protect, createReservation);
+router.get("/", protect, getReservations);
+router.get("/:id", protect, getReservationById);
+router.patch("/:id/cancel", protect, cancelReservation);
 
 export default router;
