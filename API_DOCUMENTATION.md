@@ -1,6 +1,11 @@
 # 🏨 Hotel Reservation API - Comprehensive API Documentation
 
-## RESTful API built with **Node.js, Express 5, MongoDB (Mongoose), and JWT** for managing hotels, rooms, reservations, payments, and real-time room availability.
+RESTful API built with **Node.js, Express 5, MongoDB (Mongoose), and JWT** for managing hotels, rooms, reservations, payments, and real-time room availability.
+
+A ready-to-import Postman Collection is included in the project:  
+👉 **[`hotel-reservation-api.postman_collection.json`](./hotel-reservation-api.postman_collection.json)**
+
+---
 
 ## 📑 Table of Contents
 
