@@ -1,97 +1,66 @@
-const allowedRoomTypes = [
-  "single",
-  "double",
-  "twin",
-  "deluxe",
-  "suite",
-  "family",
-];
+export const validateAvailabilityQuery = (req, res, next) => {
+  const { checkIn, checkOut, minPrice, maxPrice, guests } = req.query;
 
-const allowedRoomStatuses = ["available", "maintenance", "inactive"];
-
-export const validateRoom = (req, res, next) => {
-  const { hotel, roomNumber, roomType, pricePerNight, capacity, status } =
-    req.body;
-
-  // Validate required fields when creating a room
-  if (req.method === "POST") {
-    if (
-      !hotel ||
-      !roomNumber ||
-      !roomType ||
-      pricePerNight === undefined ||
-      capacity === undefined
-    ) {
-      return res.status(400).json({
-        success: false,
-        message:
-          "Hotel, room number, room type, price per night, and capacity are required.",
-      });
-    }
-  }
-
-  // Validate room number
-  if (roomNumber !== undefined) {
-    if (typeof roomNumber !== "string" || !roomNumber.trim()) {
-      return res.status(400).json({
-        success: false,
-        message: "Room number must be a non-empty string.",
-      });
-    }
-  }
-
-  // Validate room type
-  if (roomType !== undefined && !allowedRoomTypes.includes(roomType)) {
+  if (Boolean(checkIn) !== Boolean(checkOut)) {
     return res.status(400).json({
       success: false,
-      message: `Room type must be one of: ${allowedRoomTypes.join(", ")}.`,
+      message: "Both checkIn and checkOut are required together.",
     });
   }
 
-  // Validate price
-  if (pricePerNight !== undefined) {
+  if (checkIn && checkOut) {
+    const start = new Date(checkIn);
+    const end = new Date(checkOut);
+
     if (
-      typeof pricePerNight !== "number" ||
-      !Number.isFinite(pricePerNight) ||
-      pricePerNight < 0
+      Number.isNaN(start.getTime()) ||
+      Number.isNaN(end.getTime())
     ) {
       return res.status(400).json({
         success: false,
-        message: "Price per night must be a non-negative number.",
+        message: "Please provide valid check-in and check-out dates.",
       });
     }
-  }
 
-  // Validate capacity
-  if (capacity !== undefined) {
-    if (!Number.isInteger(capacity) || capacity < 1) {
+    if (end <= start) {
       return res.status(400).json({
         success: false,
-        message: "Capacity must be a positive whole number.",
+        message: "Check-out must be after check-in.",
       });
     }
   }
 
-  // Validate status
-  if (status !== undefined && !allowedRoomStatuses.includes(status)) {
+  for (const [field, value] of [
+    ["minPrice", minPrice],
+    ["maxPrice", maxPrice],
+    ["guests", guests],
+  ]) {
+    if (value !== undefined) {
+      const number = Number(value);
+
+      if (
+        value.trim() === "" ||
+        !Number.isFinite(number) ||
+        number < 0 ||
+        (field === "guests" && (!Number.isInteger(number) || number < 1))
+      ) {
+        return res.status(400).json({
+          success: false,
+          message: `${field} must be a valid ${field === "guests" ? "positive whole number" : "non-negative number"}.`,
+        });
+      }
+    }
+  }
+
+  if (
+    minPrice !== undefined &&
+    maxPrice !== undefined &&
+    Number(minPrice) > Number(maxPrice)
+  ) {
     return res.status(400).json({
       success: false,
-      message: `Status must be one of: ${allowedRoomStatuses.join(", ")}.`,
+      message: "minPrice cannot be greater than maxPrice.",
     });
-  }
-
-  // Validate amenities and images
-  for (const field of ["amenities", "images"]) {
-    if (
-      req.body[field] !== undefined &&
-      (!Array.isArray(req.body[field]) ||
-        !req.body[field].every((item) => typeof item === "string"))
-    ) {
-      return res.status(400).json({
-        success: false,
-        message: `${field} must be an array of strings.`,
-      });
-    }
   }
 
   next();
