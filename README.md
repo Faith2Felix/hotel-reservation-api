@@ -53,6 +53,11 @@ Create a `.env` file in the root directory and add the required environment vari
 npm run dev
 ```
 
+## 🚀 API Documentation & Postman Collection
+
+- 📘 **Full API Documentation**: See [API_DOCUMENTATION.md](./API_DOCUMENTATION.md) for complete endpoint references, schemas, and error codes.
+- 📮 **Postman Collection**: Import [hotel-reservation-api.postman_collection.json](./hotel-reservation-api.postman_collection.json) directly into Postman to test all routes with pre-configured variables and auto-token management.
+
 ## Project Status
 
-🚧 Currently under development.
+✅ Merged and active. Fully functional RESTful API.
