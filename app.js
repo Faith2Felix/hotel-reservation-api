@@ -5,9 +5,11 @@ import dotenv from "dotenv";
 import connectDB from "./src/config/db.js";
 import hotelRoute from "./src/routes/hotelRoute.js";
 import reservationRoutes from "./src/routes/reservationRoutes.js";
+import roomRoutes from "./src/routes/roomRoutes.js";
 import { errorHandler } from "./src/middlewares/errorHandler.js";
 
 const app = express();
+app.use("/api/rooms", roomRoutes);
 
 app.use(cors());
 app.use(express.json());
